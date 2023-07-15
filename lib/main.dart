@@ -1,8 +1,11 @@
-import 'package:animated_splash_screen/animated_splash_screen.dart';
+//import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'dart:developer';
 import 'package:eatwell/Activity/homepage.dart';
+import 'package:eatwell/Activity/loginScreen.dart';
+import 'package:eatwell/Partial/MainScreenPartial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Route/Routes.dart';
 
 void main() {
@@ -31,80 +34,42 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  String? username;
+  String? password;
+
+  Future<bool> cekPreferences() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    username = pref.getString("username");
+    password = pref.getString("password");
+    log("data yang tersimpan : $username -- $password");
+    return (username != null && password != null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: AnimatedSplashScreen(
-        splashIconSize: MediaQuery.of(context).size.height,
-        splashTransition: SplashTransition.fadeTransition,
-        animationDuration: const Duration(seconds: 4),
-        backgroundColor: const Color.fromRGBO(225, 238, 208, 1),
-        nextScreen: const Homepage(),
-        splash: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Image.asset(
-              'assets/images/splashlogo.png',
-              height: MediaQuery.of(context).size.height * 0.2,
-              width: MediaQuery.of(context).size.height * 0.2,
-              alignment: Alignment.center,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Center(
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Text(
-                  "Eat",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontFamily: "swash",
-                      fontSize: 25,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+        resizeToAvoidBottomInset: false,
+        body: FutureBuilder(
+          future: cekPreferences(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Column(
+                  children: [
+                    SpinKitPouringHourGlass(color: Colors.green),
+                    Text(
+                      "Menunggu...",
+                      style: TextStyle(fontFamily: "roboto", fontSize: 14),
+                    )
+                  ],
                 ),
-                const Text(
-                  "Well",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontFamily: "swash",
-                      fontSize: 25,
-                      color: Color.fromRGBO(121, 187, 68, 0.8),
-                      fontWeight: FontWeight.bold),
-                ),
-              ]),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            SpinKitDoubleBounce(
-              color: Colors.green[600],
-              size: 20,
-              duration: const Duration(seconds: 4),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.2,
-            ),
-            Column(children: [
-              const Text(
-                "Healthy Calories,",
-                style: TextStyle(
-                    fontFamily: "swash", fontSize: 24, color: Colors.black),
-              ),
-              const Text(
-                "Balanced Life",
-                style: TextStyle(
-                    fontFamily: "swash",
-                    fontSize: 30,
-                    color: Color.fromRGBO(121, 187, 68, 0.8)),
-              ),
-            ]),
-          ],
-        ),
-      ),
-    );
+              );
+            } else if (snapshot.hasData && snapshot.data!) {
+              return MainScreen(const Homepage(), context);
+            } else {
+              return MainScreen(const LoginScreen(), context);
+            }
+          },
+        ));
   }
 }

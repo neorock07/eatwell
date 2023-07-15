@@ -37,7 +37,7 @@ class _HomepageState extends State<Homepage> {
           onTap: _setSelectedIndex,
           unselectedItemColor: Colors.grey[500],
           selectedItemColor: const Color.fromRGBO(121, 187, 68, 0.8),
-          type: BottomNavigationBarType.shifting,
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(LucideIcons.home), label: "Home"),

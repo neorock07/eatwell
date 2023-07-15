@@ -52,18 +52,52 @@ class Resep {
         riwayat: riwayatList.map((data) => Riwayat.connectApi(data)).toList());
   }
 
-  static Future<List<dynamic>> getData() async {
-    var url = Uri.http("192.168.1.8:8080", "/api/resep");
+  static Future<List<dynamic>?> getData() async {
+    String ip = "192.168.1.3";
+    var url = Uri.http("$ip:8080", "/api/resep");
     var response = await http.get(url);
     late var jsonData;
-    late var resepList;
+    //Map<String, dynamic>? dataMap;
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body) as List<dynamic>;
-      resepList = jsonData.map((data) => Resep.connectApi(data)).toList();
+      log("panjang : ${jsonData.length}");
+      //dataMap = Map<String, dynamic>.from(jsonData);
+      jsonData.forEach((element) {
+        log("data : ${element['nama']} | ${element['kalori']} | ${element['lama']} | ${element['foto']} ");
+      });
     } else {
       log("failed to get data");
     }
-    return resepList;
+    return jsonData;
+  }
+
+  static Future<Resep?> getDataById(int? id) async {
+    String ip = "192.168.1.3";
+    var url = Uri.http("$ip:8080", "/api/resep/$id");
+    var response = await http.get(url);
+
+    late var jsonData;
+    if (response.statusCode == 200) {
+      jsonData = json.decode(response.body) as Map<String, dynamic>;
+      log("contoh data :${jsonData['nama']}");
+    } else {
+      log("failed to get data");
+    }
+    return Resep.connectApi(jsonData);
+  }
+
+  static Future<List<dynamic>> fromKalori(double? kalori) async {
+    String ip = "192.168.1.3";
+    var url = Uri.http("$ip:8080", "/api/resep/kalori")
+        .replace(queryParameters: {"kalori": kalori.toString()});
+    var response = await http.get(url);
+    late var data;
+    if (response.statusCode == 200) {
+      data = json.decode(response.body) as List<dynamic>;
+    } else {
+      data = null;
+    }
+    return data;
   }
 }
 

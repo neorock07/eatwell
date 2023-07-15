@@ -44,6 +44,12 @@ dependencies:
   percent_indicator: ^4.0.1
   camera: ^0.10.5+2
   path_provider: ^2.0.15
+  shared_preferences: ^2.0.6
+  custom_radio_grouped_button: any
+  image_picker: ^0.8.9
+  bulleted_list: ^0.0.1+0.1a
+  share_plus: ^7.0.2
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +77,10 @@ flutter:
     - assets/images/logo.png
     - assets/images/food.png
     - assets/images/splashlogo.png
+    - assets/images/logo2.png
+    - assets/images/bound.png
+    - assets/images/profile.png
+    - assets/images/none.png
     #   - images/a_dot_ham.jpeg
 
     # An image asset can refer to one or more resolution-specific "variants", see
